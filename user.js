@@ -42,7 +42,7 @@ export async function login(event, context, callback) {
     if (await bcryptjs.compare(data.password, user.password)) {
       callback(null, success(user));
     } else {
-      callback(null, failure({ message: 'Invalid password.', user }));
+      callback(null, failure({ message: 'Invalid password.' }));
     }
   } catch (e) {
     callback(null, failure(e));
