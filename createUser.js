@@ -13,6 +13,10 @@ export function main(event, context, callback) {
       username: data.username,
       password: data.password,
       createdAt: Date.now()
+    },
+    ConditionExpression: 'username <> :username',
+    ExpressionAttributeValues: {
+      ":username": data.username,
     }
   };
 
