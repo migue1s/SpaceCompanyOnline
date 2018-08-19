@@ -41,6 +41,9 @@ provider:
         - dynamodb:DeleteItem
       Resource: 
         - "Fn::GetAtt": [ SpaceCompanyTable, Arn ]
+  environment:
+    tableName:
+      Ref: SpaceCompanyTable
 
 functions:
   hello:
@@ -50,11 +53,13 @@ functions:
           method: get
           path: hello
           cors: true
-
-
-environment:
-  tableName:
-    Ref: SpaceCompanyTable
+  register:
+    handler: createUser.main
+    events:
+      - http:
+          method: post
+          path: register
+          cors: true
 
 resources:
   Resources:
