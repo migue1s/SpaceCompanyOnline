@@ -60,6 +60,13 @@ functions:
           method: post
           path: register
           cors: true
+  login:
+    handler: user.login
+    events:
+      - http:
+          method: post
+          path: login
+          cors: true
 
 resources:
   Resources:
