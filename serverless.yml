@@ -54,7 +54,7 @@ functions:
           path: hello
           cors: true
   register:
-    handler: createUser.main
+    handler: user.create
     events:
       - http:
           method: post
