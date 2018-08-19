@@ -14,6 +14,12 @@ custom:
     prod: 1
     default: 1
   tableThroughput: ${self:custom.tableThroughputs.${self:custom.stage}, self:custom.tableThroughputs.default}
+  webpack:
+    webpackConfig: ./webpack.config.js
+    packager: 'yarn'
+    includeModules:
+      forceExclude:
+        - aws-sdk
 
 provider:
   name: aws
@@ -33,25 +39,17 @@ provider:
         - dynamodb:PutItem
         - dynamodb:UpdateItem
         - dynamodb:DeleteItem
-      Resource:
+      Resource: 
         - "Fn::GetAtt": [ SpaceCompanyTable, Arn ]
-  webpack:
-    webpackConfig: ./webpack.config.js
-    includeModules: true
 
 functions:
-  register:
-    handler: src/user.register
+  hello:
+    handler: handler.hello
     events:
       - http:
-          method: post
-          path: user/register
-  login:
-    handler: src/user.login
-    events:
-      - http:
-          method: post
-          path: user/login
+          method: get
+          path: hello
+          cors: true
 
 
 environment:
@@ -66,10 +64,6 @@ resources:
         TableName: ${self:custom.stage}-spaceCompanyTable
         AttributeDefinitions:
           - AttributeName: username
-            AttributeType: S
-          - AttributeName: password
-            AttributeType: S
-          - AttributeName: save
             AttributeType: S
         KeySchema:
           - AttributeName: username
