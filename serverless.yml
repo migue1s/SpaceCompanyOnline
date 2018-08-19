@@ -46,6 +46,12 @@ functions:
       - http:
           method: post
           path: user/register
+  login:
+    handler: src/user.login
+    events:
+      - http:
+          method: post
+          path: user/login
 
 
 environment:
