@@ -1,20 +1,70 @@
 service:
-  name: aws-nodejs-ecma-script
+  name: space-company-online
 
 # Add the serverless-webpack plugin
 plugins:
   - serverless-webpack
+  - serverless-offline
+
+custom:
+  # Our stage is based on what is passed in when running serverless
+  # commands. Or fallsback to what we have set in the provider section.
+  stage: ${opt:stage, self:provider.stage}
+  tableThroughputs:
+    prod: 1
+    default: 1
+  tableThroughput: ${self:custom.tableThroughputs.${self:custom.stage}, self:custom.tableThroughputs.default}
 
 provider:
   name: aws
   runtime: nodejs6.10
+  stage: dev
+  region: us-east-1
+  memorySize: 512
+  tags:
+    project: space-company
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:DescribeTable
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource:
+        - "Fn::GetAtt": [ SpaceCompanyTable, Arn ]
 
 functions:
-  first:
-    handler: first.hello
-  second:
-    handler: second.hello
+  register:
+    handler: src/user.register
     events:
       - http:
-          method: get
-          path: second
+          method: post
+          path: user/register
+
+
+environment:
+  tableName:
+    Ref: SpaceCompanyTable
+
+resources:
+  Resources:
+    SpaceCompanyTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.stage}-spaceCompanyTable
+        AttributeDefinitions:
+          - AttributeName: username
+            AttributeType: S
+          - AttributeName: password
+            AttributeType: S
+          - AttributeName: save
+            AttributeType: S
+        KeySchema:
+          - AttributeName: username
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: ${self:custom.tableThroughput}
+          WriteCapacityUnits: ${self:custom.tableThroughput}
