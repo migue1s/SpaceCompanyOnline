@@ -1,6 +1,7 @@
 import bcryptjs from 'bcryptjs';
 import { call } from './dynamoDB';
 import { success, failure } from './responseBuilder';
+import jwt from 'jsonwebtoken';
 
 export async function create(event, context, callback) {
   const data = JSON.parse(event.body);
@@ -11,7 +12,6 @@ export async function create(event, context, callback) {
     Item: {
       username: data.username,
       password: hash,
-      passwordSalt: salt,
       createdAt: Date.now()
     },
     ConditionExpression: 'username <> :username',
@@ -26,7 +26,6 @@ export async function create(event, context, callback) {
   } catch (e) {
     if (e.code === 'ConditionalCheckFailedException') {
       callback(null, failure({
-        code: 409,
         message: 'Username already in use',
       }, 409));
     } else {
@@ -46,14 +45,15 @@ export async function login(event, context, callback) {
   try {
     const result = await call("get", params);
     const user = result.Item;
-    if (await bcryptjs.compare(data.password, user.password)) {
+    const loggedIn = await bcryptjs.compare(data.password, user.password);
+    if (loggedIn) {
       const token = jwt.sign({ username: user.username }, 'supersecret', { expiresIn: '15m' });
     
       callback(null, success({ token }));
     } else {
-      callback(null, failure({ message: 'Invalid password.' }));
+      callback(null, failure({ message: 'Invalid username or password.' }, 400));
     }
-  } catch (e) {
-    callback(null, failure(e));
+    } catch (e) {
+    callback(null, failure({ message: 'Exception caught', e }, 400));
   }
 }
