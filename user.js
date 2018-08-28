@@ -40,7 +40,9 @@ export async function login(event, context, callback) {
     const result = await call("get", params);
     const user = result.Item;
     if (await bcryptjs.compare(data.password, user.password)) {
-      callback(null, success(user));
+      const token = jwt.sign({ username: user.username }, 'supersecret', { expiresIn: '15m' });
+    
+      callback(null, success({ token }));
     } else {
       callback(null, failure({ message: 'Invalid password.' }));
     }
