@@ -24,7 +24,14 @@ export async function create(event, context, callback) {
     await call("put", params);
     callback(null, success(params.Item));
   } catch (e) {
-    callback(null, failure(e));
+    if (e.code === 'ConditionalCheckFailedException') {
+      callback(null, failure({
+        code: 409,
+        message: 'Username already in use',
+      }, 409));
+    } else {
+      callback(null, failure(e));
+    }
   }
 }
 
