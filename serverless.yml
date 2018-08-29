@@ -46,6 +46,8 @@ provider:
       Ref: SpaceCompanyTable
 
 functions:
+  authorize:
+    handler: jwtAuthenticator.jwtAuthorizer
   hello:
     handler: handler.hello
     events:
@@ -53,6 +55,7 @@ functions:
           method: get
           path: hello
           cors: true
+          authorizer: authorize
   register:
     handler: user.create
     events:

@@ -1,6 +1,6 @@
 import bcryptjs from 'bcryptjs';
-import { call } from './dynamoDB';
-import { success, failure } from './responseBuilder';
+import { call } from './utils/dynamoDB';
+import { success, failure } from './utils/responseBuilder';
 import jwt from 'jsonwebtoken';
 import config from './config';
 
