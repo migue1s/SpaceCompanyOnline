@@ -4,7 +4,7 @@ import config from './config';
 
 export async function jwtAuthorizer(event, context, callback) {
 
-  const token = event.authorizationToken;
+  const token = event.authorizationToken.replace('Bearer ', '');
 
   try {
     const decoded = await jwt.verify(token, config.jwtSecret);
@@ -16,6 +16,6 @@ export async function jwtAuthorizer(event, context, callback) {
 
     callback(null, policyDocument);
   } catch (e) {
-    callback(event); // Return a 401 Unauthorized response
+    callback('Unauthorized'); // Return a 401 Unauthorized response
   }
 }
