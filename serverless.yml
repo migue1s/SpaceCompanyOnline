@@ -78,6 +78,14 @@ functions:
           path: save
           cors: true
           authorizer: authorize
+  load:
+    handler: game.load
+    events:
+      - http:
+          method: get
+          path: load
+          cors: true
+          authorizer: authorize
 
 resources:
   Resources:

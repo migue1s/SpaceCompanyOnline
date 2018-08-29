@@ -31,3 +31,23 @@ export async function save(event, context, callback) {
     callback(null, failure(e));
   }
 }
+
+export async function load(event, context, callback) {
+  const username = getUsername(event);
+  const params = {
+    TableName: process.env.tableName,
+    Key: { username },
+  };
+
+  try {
+    const result = await call("get", params);
+    const item = result.Item;
+
+    callback(null, success({
+      save: item.save,
+      savedAt: item.savedAt,
+    }));
+  } catch (e) {
+    callback(null, failure(e, 400));
+  }
+}
