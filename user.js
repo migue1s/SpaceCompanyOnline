@@ -39,9 +39,7 @@ export async function login(event, context, callback) {
   const data = JSON.parse(event.body);
   const params = {
     TableName: process.env.tableName,
-    Key: {
-      username: data.username,
-    },
+    Key: { username: data.username },
   };
   try {
     const result = await call("get", params);

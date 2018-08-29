@@ -48,14 +48,6 @@ provider:
 functions:
   authorize:
     handler: jwtAuthenticator.jwtAuthorizer
-  hello:
-    handler: handler.hello
-    events:
-      - http:
-          method: get
-          path: hello
-          cors: true
-          authorizer: authorize
   register:
     handler: user.create
     events:
@@ -70,6 +62,22 @@ functions:
           method: post
           path: login
           cors: true
+  hello:
+    handler: handler.hello
+    events:
+      - http:
+          method: get
+          path: hello
+          cors: true
+          authorizer: authorize
+  save:
+    handler: game.save
+    events:
+      - http:
+          method: post
+          path: save
+          cors: true
+          authorizer: authorize
 
 resources:
   Resources:

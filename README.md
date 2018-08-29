@@ -2,3 +2,6 @@
 
 # SpaceCompanyOnline
 Space Company online save server
+
+
+https://yos.io/2017/09/03/serverless-authentication-with-jwt/
