@@ -9,19 +9,24 @@ export async function save(event, context, callback) {
   const params = {
     TableName: process.env.tableName,
     Key: { username },
-    UpdateExpression: `SET #save = :save`,
+    UpdateExpression: `SET #save = :save, #savedAt = :savedAt`,
     ExpressionAttributeNames: {
       '#save': 'save',
+      '#savedAt': 'savedAt',
     },
     ExpressionAttributeValues: {
       ":save": payload.data,
+      ":savedAt": Date.now(),
     },
     ReturnValues: "ALL_NEW",
   };
 
   try {
     const result = await call("update", params);
-    callback(null, success(result));
+    const item = result.Attributes;
+    callback(null, success({
+      savedAt: item.savedAt,
+    }));
   } catch (e) {
     callback(null, failure(e));
   }
